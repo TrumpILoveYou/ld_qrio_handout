@@ -1,0 +1,265 @@
+./analyzer_interface.cpp:2: * Copyright (c) 2017-2020 Google, Inc.  All rights reserved.
+./analyzer_interface.cpp:41: * cache-simulation-based tools.
+./analyzer_interface.cpp:106:    knobs->num_cores = op_num_cores.get_value();
+./analyzer_interface.cpp:107:    knobs->line_size = op_line_size.get_value();
+./analyzer_interface.cpp:108:    knobs->L1I_size = op_L1I_size.get_value();
+./analyzer_interface.cpp:109:    knobs->L1D_size = op_L1D_size.get_value();
+./analyzer_interface.cpp:110:    knobs->L1I_assoc = op_L1I_assoc.get_value();
+./analyzer_interface.cpp:111:    knobs->L1D_assoc = op_L1D_assoc.get_value();
+./analyzer_interface.cpp:112:    knobs->LL_size = op_LL_size.get_value();
+./analyzer_interface.cpp:113:    knobs->LL_assoc = op_LL_assoc.get_value();
+./analyzer_interface.cpp:114:    knobs->LL_miss_file = op_LL_miss_file.get_value();
+./analyzer_interface.cpp:115:    knobs->model_coherence = op_coherence.get_value();
+./analyzer_interface.cpp:116:    knobs->replace_policy = op_replace_policy.get_value();
+./analyzer_interface.cpp:117:    knobs->data_prefetcher = op_data_prefetcher.get_value();
+./analyzer_interface.cpp:118:    knobs->skip_refs = op_skip_refs.get_value();
+./analyzer_interface.cpp:119:    knobs->warmup_refs = op_warmup_refs.get_value();
+./analyzer_interface.cpp:120:    knobs->warmup_fraction = op_warmup_fraction.get_value();
+./analyzer_interface.cpp:121:    knobs->sim_refs = op_sim_refs.get_value();
+./analyzer_interface.cpp:122:    knobs->verbose = op_verbose.get_value();
+./analyzer_interface.cpp:123:    knobs->cpu_scheduling = op_cpu_scheduling.get_value();
+./cache.cpp:2: * Copyright (c) 2015-2020 Google, Inc.  All rights reserved.
+./cache.cpp:70:        compute_tag(memref.flush.addr + memref.flush.size - 1 /*no overflow*/);
+./cache.cpp:85:        ((cache_t *)parent_)->flush(memref);
+./cache.cpp:87:        ((cache_stats_t *)stats_)->flush(memref);
+./cache.h:2: * Copyright (c) 2015-2020 Google, Inc.  All rights reserved.
+./cache.h:52:         bool inclusive = false, bool coherent_cache = false, int id_ = -1,
+./cache_fifo.cpp:2: * Copyright (c) 2015-2020 Google, Inc.  All rights reserved.
+./cache_fifo.cpp:35:// For the FIFO/Round-Robin implementation, all the cache blocks in a set are organized
+./cache_fifo.cpp:82:            get_caching_device_block(block_idx, (i + 1) & (associativity_ - 1)).counter_ =
+./cache_fifo.cpp:87:    return -1;
+./cache_fifo.h:2: * Copyright (c) 2015-2020 Google, Inc.  All rights reserved.
+./cache_fifo.h:46:         bool coherent_cache = false, int id_ = -1,
+./cache_line.h:2: * Copyright (c) 2015-2020 Google, Inc.  All rights reserved.
+./cache_line.h:45:    // and functions, e.g., coherency-related ones. Therefore, it is
+./cache_lru.cpp:2: * Copyright (c) 2015-2020 Google, Inc.  All rights reserved.
+./cache_lru.cpp:72:    // Set to non-zero for later access_update optimization on repeated access
+./cache_lru.h:2: * Copyright (c) 2015-2020 Google, Inc.  All rights reserved.
+./cache_miss_analyzer.cpp:2: * Copyright (c) 2015-2020 Google, LLC  All rights reserved.
+./cache_miss_analyzer.cpp:108:                recommendation->pc = pc_cache_misses_it.first;
+./cache_miss_analyzer.cpp:109:                recommendation->stride = stride;
+./cache_miss_analyzer.cpp:110:                recommendation->locality = kNTA;
+./cache_miss_analyzer.cpp:127:        int stride = static_cast<int>(cache_misses[i] - cache_misses[i - 1]);
+./cache_miss_analyzer.cpp:163:    delete llcaches_["LL"]->get_stats();
+./cache_miss_analyzer.cpp:167:    llcaches_["LL"]->set_stats(ll_stats_);
+./cache_miss_analyzer.cpp:177:    return ll_stats_->generate_recommendations();
+./cache_miss_analyzer.cpp:184:        ll_stats_->generate_recommendations();
+./cache_miss_analyzer.cpp:194:        std::cerr << "pc=0x" << std::hex << recommendation->pc << std::dec
+./cache_miss_analyzer.cpp:195:                  << ", stride=" << recommendation->stride
+./cache_miss_analyzer.cpp:196:                  << ", locality=" << recommendation->locality << std::endl;
+./cache_miss_analyzer.cpp:199:            fprintf(file, "0x%lx,%d,%s\n", static_cast<unsigned long>(recommendation->pc),
+./cache_miss_analyzer.cpp:200:                    recommendation->stride, recommendation->locality.c_str());
+./cache_miss_analyzer.h:2: * Copyright (c) 2015-2020 Google, LLC  All rights reserved.
+./cache_miss_analyzer.h:34: * a significant number of last-level cache (LLC) misses. In addition,
+./cache_miss_analyzer.h:60:    // Constructor - params description:
+./cache_miss_analyzer.h:61:    // - warmup_enabled: Indicates whether the caches need to be warmed up
+./cache_miss_analyzer.h:63:    // - line_size: The cache line size in bytes.
+./cache_miss_analyzer.h:64:    // - miss_count_threshold: Threshold of misses count by a load instruction
+./cache_miss_analyzer.h:66:    // - miss_frac_threshold: Threshold of misses fraction by a load
+./cache_miss_analyzer.h:68:    // - confidence_threshold: Confidence threshold to include a discovered
+./cache_miss_analyzer.h:132:    // - cache_simulator_knobs_t: Encapsulates the cache simulator params.
+./cache_miss_analyzer.h:133:    // - miss_count_threshold: Threshold of miss count by a load instruction
+./cache_miss_analyzer.h:135:    // - miss_frac_threshold: Threshold of miss fraction by a load
+./cache_miss_analyzer.h:137:    // - confidence_threshold: Confidence threshold to include a discovered
+./cache_simulator.h:2: * Copyright (c) 2015-2020 Google, Inc.  All rights reserved.
+./cache_simulator.h:33:/* cache_simulator: controls the multi-cache-level simulation.
+./cache_simulator.h:49:    // using a set of knobs. It assumes a 2-level cache hierarchy with
+./cache_simulator.h:86:    std::unordered_map<std::string, cache_t *> other_caches_; // Non-L1, non-LLC caches
+./cache_simulator.h:88:    // This is a list of non-coherent caches for shared caches above snoop filter.
+./cache_simulator_create.h:2: * Copyright (c) 2017-2018 Google, Inc.  All rights reserved.
+./cache_simulator_create.h:93:/** Creates an instance of a cache simulator with a 2-level hierarchy. */
+./cache_stats.cpp:2: * Copyright (c) 2015-2020 Google, Inc.  All rights reserved.
+./cache_stats.h:2: * Copyright (c) 2015-2020 Google, Inc.  All rights reserved.
+./caching_device_block.h:2: * Copyright (c) 2015-2020 Google, Inc.  All rights reserved.
+./caching_device_block.h:42:// Assuming a block of a caching device represents a memory space of at least 4-byte,
+./caching_device_block.h:46:static const addr_t TAG_INVALID = (addr_t)-1; // block is invalid
+./caching_device_block.h:66:    // XXX: using int_least64_t here results in a ~4% slowdown for 32-bit apps.
+./caching_device_block.h:67:    // A 32-bit counter should be sufficient but we may want to revisit.
+./prefetcher.cpp:2: * Copyright (c) 2017-2020 Google, Inc.  All rights reserved.
+./prefetcher.cpp:48:    // We implement a simple next-line prefetcher.
+./prefetcher.cpp:52:    cache->request(memref);
+./prefetcher.h:2: * Copyright (c) 2017-2020 Google, Inc.  All rights reserved.
+./simulator.cpp:2: * Copyright (c) 2015-2020 Google, Inc.  All rights reserved.
+./simulator.cpp:67:    last_thread_ = -1;
+./simulator.cpp:68:    last_core_ = -1;
+./simulator.cpp:99:            min_core = exists->second;
+./simulator.cpp:102:            --thread_counts_[prior->second];*/
+./simulator.cpp:116:    // We want to assign to the least-loaded core, measured just by
+./simulator.cpp:140:        return exists->second;
+./simulator.cpp:164:    assert(thread_counts_[exists->second] > 0);
+./simulator.cpp:165:    --thread_counts_[exists->second];
+./simulator.cpp:167:        std::cerr << "thread " << tid << " exited from core " << exists->second
+./simulator.cpp:168:                  << " (count=" << thread_counts_[exists->second] << ")" << std::endl;
+./simulator.cpp:189:            if (iter->second == core) {
+./simulator.cpp:192:                std::cerr << "#" << iter->first;
+./simulator.h:2: * Copyright (c) 2015-2020 Google, Inc.  All rights reserved.
+./snoop_filter.cpp:2: * Copyright (c) 2015-2020 Google, Inc.  All rights reserved.
+./snoop_filter.cpp:63:    if (coherence_entry->sharers.empty()) {
+./snoop_filter.cpp:64:        coherence_entry->sharers.resize(num_snooped_caches_, false);
+./snoop_filter.cpp:65:        coherence_entry->dirty = false;
+./snoop_filter.cpp:68:    auto num_sharers = std::count(coherence_entry->sharers.begin(),
+./snoop_filter.cpp:69:                                  coherence_entry->sharers.end(), true);
+./snoop_filter.cpp:76:    assert(!coherence_entry->dirty || num_sharers == 1);
+./snoop_filter.cpp:79:    if (!coherence_entry->sharers[id] && coherence_entry->dirty) {
+./snoop_filter.cpp:81:        coherence_entry->dirty = false;
+./snoop_filter.cpp:86:        coherence_entry->dirty = true;
+./snoop_filter.cpp:90:                if (coherence_entry->sharers[i] && id != i) {
+./snoop_filter.cpp:91:                    caches_[i]->invalidate(tag, INVALIDATION_COHERENCE);
+./snoop_filter.cpp:93:                    coherence_entry->sharers[i] = false;
+./snoop_filter.cpp:98:    coherence_entry->sharers[id] = true;
+./snoop_filter.cpp:105:    if (coherence_entry->sharers.empty()) {
+./snoop_filter.cpp:109:    auto num_sharers = std::count(coherence_entry->sharers.begin(),
+./snoop_filter.cpp:110:                                  coherence_entry->sharers.end(), true);
+./snoop_filter.cpp:114:      if (coherence_entry->sharers[i] && id != i) {
+./snoop_filter.cpp:115:         caches_[i]->get_stats()->access(memref,true,cache_block);
+./snoop_filter.cpp:116:	 caches_[id]->get_stats()->fetch();
+./snoop_filter.cpp:128:    assert(coherence_entry->sharers.size() == (uint64_t)num_snooped_caches_);
+./snoop_filter.cpp:134:    assert(coherence_entry->sharers[id]);
+./snoop_filter.cpp:136:    if (coherence_entry->dirty) {
+./snoop_filter.cpp:138:        coherence_entry->dirty = false;
+./snoop_filter.cpp:141:    coherence_entry->sharers[id] = false;
+./snoop_filter.h:2: * Copyright (c) 2015-2020 Google, Inc.  All rights reserved.
+./tlb.cpp:2: * Copyright (c) 2015-2020 Google, Inc.  All rights reserved.
+./tlb.cpp:59:    addr_t final_addr = memref_in.data.addr + memref_in.data.size - 1 /*avoid overflow*/;
+./tlb.cpp:64:    // Optimization: check last tag and pid if single-block
+./tlb.cpp:69:        assert(tag != TAG_INVALID && tag == tlb_entry->tag_ &&
+./tlb.cpp:70:               pid == ((tlb_entry_t *)tlb_entry)->pid_);
+./tlb.cpp:71:        stats_->access(memref_in, true /*hit*/, tlb_entry);
+./tlb.cpp:73:            parent_->get_stats()->child_access(memref_in, true, tlb_entry);
+./tlb.cpp:84:            memref.data.size = ((tag + 1) << block_size_bits_) - memref.data.addr;
+./tlb.cpp:88:            if (tlb_entry->tag_ == tag && ((tlb_entry_t *)tlb_entry)->pid_ == pid) {
+./tlb.cpp:89:                stats_->access(memref, true /*hit*/, tlb_entry);
+./tlb.cpp:91:                    parent_->get_stats()->child_access(memref, true, tlb_entry);
+./tlb.cpp:100:            stats_->access(memref, false /*miss*/, tlb_entry);
+./tlb.cpp:103:                parent_->get_stats()->child_access(memref, false, tlb_entry);
+./tlb.cpp:104:                parent_->request(memref);
+./tlb.cpp:109:            tlb_entry->tag_ = tag;
+./tlb.cpp:110:            ((tlb_entry_t *)tlb_entry)->pid_ = pid;
+./tlb.cpp:118:            memref.data.size = final_addr - next_addr + 1 /*undo the -1*/;
+./tlb.h:2: * Copyright (c) 2015-2020 Google, Inc.  All rights reserved.
+./tlb_entry.h:2: * Copyright (c) 2015-2020 Google, Inc.  All rights reserved.
+./tlb_entry.h:47:    // XXX: support page privilege and MMU-related exceptions
+./tlb_simulator.cpp:2: * Copyright (c) 2015-2020 Google, Inc.  All rights reserved.
+./tlb_simulator.cpp:38:#include <stdint.h> /* for supporting 64-bit integers*/
+./tlb_simulator.cpp:87:        if (!itlbs_[i]->init(knobs_.TLB_L1I_assoc, (int)knobs_.page_size,
+./tlb_simulator.cpp:89:            !dtlbs_[i]->init(knobs_.TLB_L1D_assoc, (int)knobs_.page_size,
+./tlb_simulator.cpp:91:            !lltlbs_[i]->init(knobs_.TLB_L2_assoc, (int)knobs_.page_size,
+./tlb_simulator.cpp:108:        delete itlbs_[i]->get_stats();
+./tlb_simulator.cpp:112:        delete dtlbs_[i]->get_stats();
+./tlb_simulator.cpp:116:        delete lltlbs_[i]->get_stats();
+./tlb_simulator.cpp:128:        knobs_.skip_refs--;
+./tlb_simulator.cpp:160:        itlbs_[core]->request(memref);
+./tlb_simulator.cpp:162:        dtlbs_[core]->request(memref);
+./tlb_simulator.cpp:165:        last_thread_ = -1;
+./tlb_simulator.cpp:186:        knobs_.warmup_refs--;
+./tlb_simulator.cpp:190:                itlbs_[i]->get_stats()->reset();
+./tlb_simulator.cpp:191:                dtlbs_[i]->get_stats()->reset();
+./tlb_simulator.cpp:192:                lltlbs_[i]->get_stats()->reset();
+./tlb_simulator.cpp:196:        knobs_.sim_refs--;
+./tlb_simulator.cpp:209:            itlbs_[i]->get_stats()->print_stats("    ");
+./tlb_simulator.cpp:211:            dtlbs_[i]->get_stats()->print_stats("    ");
+./tlb_simulator.cpp:213:            lltlbs_[i]->get_stats()->print_stats("    ");
+./tlb_simulator.h:2: * Copyright (c) 2015-2020 Google, Inc.  All rights reserved.
+./tlb_simulator.h:33:/* tlb_simulator: controls the multi-level TLB simulation.
+./tlb_simulator_create.h:2: * Copyright (c) 2017-2018 Google, Inc.  All rights reserved.
+./tlb_stats.h:2: * Copyright (c) 2015-2017 Google, Inc.  All rights reserved.
+./tlb_stats.h:47:    // XXX: support page privilege and MMU-related exceptions
+./cache_simulator.cpp:2: * Copyright (c) 2015-2020 Google, Inc.  All rights reserved.
+./cache_simulator.cpp:38:#include <stdint.h> /* for supporting 64-bit integers*/
+./cache_simulator.cpp:109:    if (!llc->init(knobs_.LL_assoc, (int)knobs_.line_size, (int)knobs_.LL_size, NULL,
+./cache_simulator.cpp:143:        if (!l1_icaches_[i]->init(
+./cache_simulator.cpp:148:            !l1_dcaches_[i]->init(
+./cache_simulator.cpp:170:        !snoop_filter_->init(snooped_caches_, total_snooped_caches)) {
+./cache_simulator.cpp:234:            const auto &cache_config = cache_params.find(cache_name)->second;
+./cache_simulator.cpp:243:             * Fully shared caches are marked as non-coherent.
+./cache_simulator.cpp:245:            cache_params_t current_cache = cache_params.find(LL_name)->second;
+./cache_simulator.cpp:250:                current_cache = cache_params.find(child_name)->second;
+./cache_simulator.cpp:277:        auto &cache_config = cache_config_it->second;
+./cache_simulator.cpp:289:            parent_ = parent_it->second;
+./cache_simulator.cpp:303:            children.push_back(child_it->second);
+./cache_simulator.cpp:318:        if (!cache->ppi_init(
+./cache_simulator.cpp:321:	if (!cache->init(
+./cache_simulator.cpp:329:                cache_config.inclusive, is_coherent_, is_snooped ? snoop_id : -1,
+./cache_simulator.cpp:363:        // Keep track of non-L1 and non-LLC caches.
+./cache_simulator.cpp:368:    if (knobs_.model_coherence && !snoop_filter_->init(snooped_caches_, snoop_id)) {
+./cache_simulator.cpp:379:        delete cache->get_stats();
+./cache_simulator.cpp:380:        delete cache->get_prefetcher();
+./cache_simulator.cpp:410:        knobs_.skip_refs--;
+./cache_simulator.cpp:465:        l1_icaches_[core]->request(instrref);
+./cache_simulator.cpp:479:        l1_dcaches_[core]->request(memref);
+./cache_simulator.cpp:486:        l1_icaches_[core]->flush(memref);
+./cache_simulator.cpp:493:        l1_dcaches_[core]->flush(memref);
+./cache_simulator.cpp:496:        last_thread_ = -1;
+./cache_simulator.cpp:501:                      << " @" << (void *)memref.instr.addr << " non-fetched instr x"
+./cache_simulator.cpp:513:            cache->get_stats()->reset();
+./cache_simulator.cpp:519:        knobs_.sim_refs--;
+./cache_simulator.cpp:541:            if (cache.second->get_loaded_fraction() < knobs_.warmup_fraction) {
+./cache_simulator.cpp:555:        knobs_.warmup_refs--;
+./cache_simulator.cpp:578:                  << (l1_icaches_[i]->get_stats()->get_mem_access() + l1_dcaches_[i]->get_stats()->get_mem_access())
+./cache_simulator.cpp:581:                l1_icaches_[i]->get_stats()->print_stats("    ");
+./cache_simulator.cpp:582:                l1_icaches_[i]->get_parent()->child_print(enable);
+./cache_simulator.cpp:584:                l1_dcaches_[i]->get_stats()->print_stats("    ");
+./cache_simulator.cpp:585:                l1_dcaches_[i]->get_parent()->child_print(enable);
+./cache_simulator.cpp:589:                  << (l1_icaches_[i]->get_stats()->get_mem_access())
+./cache_simulator.cpp:592:                l1_icaches_[i]->get_stats()->print_stats("    ");
+./cache_simulator.cpp:593:                l1_icaches_[i]->get_parent()->child_print(enable);
+./cache_simulator.cpp:597:                l1_icaches_[i]->get_parent()->child_print(enable);
+./cache_simulator.cpp:598:                l1_dcaches_[i]->get_parent()->child_print(enable);
+./cache_simulator.cpp:600:                l1_icaches_[i]->get_parent()->child_print(enable);
+./cache_simulator.cpp:604:	auto parent = l1_icaches_[i]->get_parent();
+./cache_simulator.cpp:606:	  parent->child_print(enable);
+./cache_simulator.cpp:607:          if(!parent->can_print())
+./cache_simulator.cpp:609:          if(parent->is_print_enable())
+./cache_simulator.cpp:610:            parent->_result();
+./cache_simulator.cpp:611:          parent = parent->get_parent();
+./cache_simulator.cpp:617:    // Print non-L1, non-LLC cache stats.
+./cache_simulator.cpp:620:        caches_it.second->get_stats()->print_stats("    ");
+./cache_simulator.cpp:625:        caches_it.second->get_stats()->print_stats("    ");
+./cache_simulator.cpp:626:        caches_it.second->get_stats()->print_fetch("    ");
+./cache_simulator.cpp:632:        snoop_filter_->print_stats();
+./caching_device.h:2: * Copyright (c) 2015-2020 Google, Inc.  All rights reserved.
+./caching_device.h:64:         bool inclusive = false, bool coherent_cache = false, int id_ = -1,
+./caching_device.h:71:         bool inclusive = false, bool coherent_cache = false, int id_ = -1,
+./caching_device.cpp:2: * Copyright (c) 2015-2020 Google, Inc.  All rights reserved.
+./caching_device.cpp:82:    blocks_per_set_mask_ = blocks_per_set_ - 1;
+./caching_device.cpp:83:    if (assoc_bits_ == -1 || block_size_bits_ == -1 || !IS_POWER_OF_2(blocks_per_set_))
+./caching_device.cpp:112:    addr_t final_addr = memref_in.data.addr + memref_in.data.size - 1 /*avoid overflow*/;
+./caching_device.cpp:116:    // Optimization: check last tag if single-block
+./caching_device.cpp:121:        assert(tag != TAG_INVALID && tag == cache_block->tag_);
+./caching_device.cpp:122:        stats_->access(memref_in, true /*hit*/, cache_block);
+./caching_device.cpp:124:            parent_->stats_->child_access(memref_in, true, cache_block);
+./caching_device.cpp:136:            memref.data.size = ((tag + 1) << block_size_bits_) - memref.data.addr;
+./caching_device.cpp:141:            if (cache_block->tag_ == tag) {
+./caching_device.cpp:150:            stats_->access(memref, true /*hit*/, cache_block);
+./caching_device.cpp:152:                parent_->stats_->child_access(memref, true, cache_block);
+./caching_device.cpp:157:                    snoop_filter_->snoop(tag, id_,
+./caching_device.cpp:161:                    parent_->propagate_write(tag, this);
+./caching_device.cpp:170:            stats_->access(memref, false /*miss*/, cache_block);
+./caching_device.cpp:174:                parent_->stats_->child_access(memref, false, cache_block);
+./caching_device.cpp:175:                parent_->request(memref);
+./caching_device.cpp:179:		snoop_filter_->share_between_core(tag,id_,memref,cache_block);
+./caching_device.cpp:180:                snoop_filter_->snoop(tag, id_, (memref.data.type == TRACE_TYPE_WRITE));
+./caching_device.cpp:183:            addr_t victim_tag = cache_block->tag_;
+./caching_device.cpp:191:                        child->invalidate(victim_tag, INVALIDATION_INCLUSIVE);
+./caching_device.cpp:203:                            if (child->contains_tag(victim_tag)) {
+./caching_device.cpp:212:                            snoop_filter_->snoop_eviction(victim_tag, id_);
+./caching_device.cpp:215:                            parent_->propagate_eviction(victim_tag, this);
+./caching_device.cpp:220:            cache_block->tag_ = tag;
+./caching_device.cpp:228:            prefetcher_->prefetch(this, memref);
+./caching_device.cpp:233:            memref.data.size = final_addr - next_addr + 1 /*undo the -1*/;
+./caching_device.cpp:283:            stats_->invalidate(invalidation_type);
+./caching_device.cpp:292:                    child->invalidate(tag, invalidation_type);
+./caching_device.cpp:301:            child->invalidate(tag, invalidation_type);
+./caching_device.cpp:320:        if (child->contains_tag(tag)) {
+./caching_device.cpp:344:            if (child != requester && child->contains_tag(tag)) {
+./caching_device.cpp:353:        snoop_filter_->snoop_eviction(tag, id_);
+./caching_device.cpp:355:        parent_->propagate_eviction(tag, this);
+./caching_device.cpp:369:            child->invalidate(tag, INVALIDATION_COHERENCE);
+./caching_device.cpp:375:        snoop_filter_->snoop(tag, id_, true);
+./caching_device.cpp:377:        parent_->propagate_write(tag, this);
+./caching_device.cpp:386:        stats_->print_stats("  ");
+./caching_device.cpp:390:        stats_->print_stats("    ");
+./caching_device_stats.h:2: * Copyright (c) 2015-2020 Google, Inc.  All rights reserved.
+./caching_device_stats.h:60:    // A multi-block memory reference invokes this routine
+./caching_device_stats.cpp:2: * Copyright (c) 2015-2020 Google, Inc.  All rights reserved.
+./caching_device_stats.cpp:84:    // We assume we're single-threaded.

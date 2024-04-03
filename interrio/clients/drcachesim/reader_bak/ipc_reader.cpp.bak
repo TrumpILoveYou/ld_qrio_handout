@@ -1,0 +1,378 @@
+/* **********************************************************
+ * Copyright (c) 2015-2020 Google, Inc.  All rights reserved.
+ * **********************************************************/
+
+/*
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ * * Redistributions of source code must retain the above copyright notice,
+ *   this list of conditions and the following disclaimer.
+ *
+ * * Redistributions in binary form must reproduce the above copyright notice,
+ *   this list of conditions and the following disclaimer in the documentation
+ *   and/or other materials provided with the distribution.
+ *
+ * * Neither the name of Google, Inc. nor the names of its contributors may be
+ *   used to endorse or promote products derived from this software without
+ *   specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL VMWARE, INC. OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+ * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+ * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
+ * DAMAGE.
+ */
+//#define SHARE_MEM
+
+
+#include <assert.h>
+#include <map>
+#include "ipc_reader.h"
+#include "../common/memref.h"
+#include "../common/utils.h"
+
+#ifdef SHARE_MEM
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <sys/ipc.h>
+#include <sys/shm.h>
+#include <assert.h>
+#include <thread>
+#include <mutex>
+#include <ctime>
+#include <iostream>
+#include <string.h>
+std::mutex mtx;
+/** share memory head struct, used for judging the rd_idx of buffer block  */
+typedef struct shm_head
+{
+    int rd_idx;
+    int wr_idx;
+    int blocks;
+    int blksz;
+    int signal;
+    int connect;
+}head_t;
+
+typedef struct shmfifo
+{
+    head_t *p_head;
+    int *flags;
+    char *p_payload;
+    int shmid;
+}shmfifo_t;
+
+
+/**typedef struct interbuf{
+    unsigned long pc;
+    unsigned char instr[8];
+}interbuf;*/
+
+shmfifo_t *fifo = (shmfifo_t *)malloc(sizeof(shmfifo_t));
+
+interbuf buf;
+shmfifo_t* shmfifo_init(int key,int blocks,int blksz){
+
+    shmfifo_t *p=(shmfifo_t*)malloc(sizeof(shmfifo_t));
+    assert(p);
+    head_t *h = (head_t*)malloc(sizeof(head_t));
+    assert(h);
+    int * fs = (int *)malloc(sizeof(int)*blocks);
+    int len = (blocks+1)*sizeof(int)+blocks * blksz + sizeof(head_t);
+
+    int shmid = shmget(key, len, 0);
+
+    printf("userinput parm:-------------\nkey ==== %d\nblocks === %d\nblksz ===%d\nlen ====%d\nshmid ===%d\n-----------------------------------\n",key,blocks,blksz,len,shmid);
+
+    if(shmid == -1)
+    {
+        shmid = shmget(key, len, IPC_CREAT|0666);
+        printf("sucess create shmid === %d\n",shmid);
+      //  shmfifo *p_share = (shmfifo_t *)shmat(shmid,NULL,0);
+        /**head need malloc at shared memory */
+        head_t *h_share = (head_t *)shmat(shmid,NULL,0);
+        int * fs_share = (int *) ((unsigned long)h_share + sizeof(head_t));
+     //  head_t *h_share = (head_t *) (p_share + sizeof(head_t));
+        if(shmid == -1)
+        {
+            perror("shmget failure\n");
+            exit(1);
+        }
+        else
+        {
+            // initialization
+            printf("begin init!!\n");
+            h->rd_idx=0;
+            h->wr_idx=0;
+            h->blocks=blocks;
+            h->blksz=blksz;
+            for(int i =0; i< blocks; i++){
+                fs[i] = 0;
+            }
+            memcpy(h_share, h, sizeof(head_t));
+            memcpy(fs_share, fs, sizeof(int)*blocks);
+            p->p_head=h_share;
+            p->flags = fs_share;
+            p->p_payload=(char*)((unsigned long)p->p_head+ sizeof(head_t) + sizeof(int)*blocks);
+            p->shmid=shmid;
+            p->p_head->signal=0;
+            p->p_head->connect = 1;
+
+            printf("put.c init p->p_head->rd_idx===%d\n",p->p_head->rd_idx);
+            printf("put.c init p->p_head->wr_idx===%d\n",p->p_head->wr_idx);
+            printf("put.c init p->p_head->blocks===%d\n",p->p_head->blocks);
+            printf("put.c init p->p_head->blksz===%d\n",p->p_head->blksz);
+            printf("put.c init p->head===%p\n",p->p_head);
+            printf("put.c init p->shmid===%d\n",p->shmid);
+            printf("put.c init p->p_head->signal===%d\n",p->p_head->signal);
+
+            printf("finish init!!\n");
+
+
+        }
+        //memcpy(p_share, p, sizeof(shmfifo_t));
+    }
+    else
+    {
+        printf("begin get!!");
+        printf("get shmid === %d\n",shmid);
+
+        //h=(head_t*)shmat(shmid,NULL,0);
+        //p->p_head=h;
+        p->p_head=(head_t*)shmat(shmid,NULL,0);
+        p->flags = (int *)((unsigned long)p->p_head + sizeof(head_t));
+        p->p_payload=(char*)((unsigned long)p->p_head+ sizeof(head_t) + sizeof(int)*blocks);
+        p->shmid = shmid;
+        if (p->p_head == (void*)-1){
+                perror("shmat");
+                exit(1);
+        }
+        p->p_head->connect = 1;
+        printf("get sucess = shimd:%d\n",p->shmid);
+        printf("get sucess = p->p_head:%p\n",p->p_head);
+        printf("get sucess = p->p_head->blksz:%d\n",p->p_head->blksz);
+        printf("get sucess = p->p_head->rd_idx:%d\n",p->p_head->rd_idx);
+        printf("get sucess = p->p_head->wr_idx:%d\n",p->p_head->wr_idx);
+        printf("get sucess = p->p_head->blocks:%d\n",p->p_head->blocks);
+        printf("get sucess = p->p_head->signal:%d\n",p->p_head->signal);
+
+
+    }
+    return p;
+}
+void shmfifo_get(shmfifo_t* fifo, void* buf)
+{
+    while(1){
+    if(fifo->flags[fifo->p_head->rd_idx]==1){
+        memcpy(buf,fifo->p_payload+(fifo->p_head->rd_idx*fifo->p_head->blksz),fifo->p_head->blksz);
+
+        fifo->flags[fifo->p_head->rd_idx] = 0;
+        fifo->p_head->rd_idx=(fifo->p_head->rd_idx+1)%(fifo->p_head->blocks);
+        return;
+    }
+    }
+
+}
+
+
+void shmfifo_destroy(shmfifo_t* fifo)
+{
+
+    shmdt(fifo->p_head);
+
+    shmctl(fifo->shmid, IPC_RMID, 0);
+    free(fifo);
+
+}
+
+#endif
+
+
+#ifdef VERBOSE
+#    include <iostream>
+#endif
+
+ipc_reader_t::ipc_reader_t()
+    : creation_success_(false)
+{
+    /* Empty. */
+}
+
+ipc_reader_t::ipc_reader_t(const char *ipc_name, int verbosity)
+    : reader_t(verbosity, "IPC")
+    , pipe_(ipc_name)
+{
+    // We create the pipe here so the user can set up a pipe writer
+    // *before* calling the blocking analyzer_t::run().
+#ifdef SHARE_MEM    
+    creation_success_ = true;
+    key_t key;
+    char pathname[30];
+    strcpy(pathname, "/home/duan/fok.key");
+    key = ftok(pathname,0x03);
+    if(key == -1){
+        perror("ftok error");
+        exit(1);
+    }
+    fifo = shmfifo_init(key, 300000 , sizeof(interbuf));
+#else
+    creation_success_ = pipe_.create();
+#endif
+}
+
+// Work around clang-format bug: no newline after return type for single-char operator.
+// clang-format off
+bool
+ipc_reader_t::operator!()
+// clang-format on
+{
+    return !creation_success_;
+}
+
+std::string
+ipc_reader_t::get_pipe_name() const
+{
+    return pipe_.get_name();
+}
+
+bool
+ipc_reader_t::init()
+{
+#ifdef SHARE_MEM
+    printf(" in ipc reader init\n");
+//    ++*this;
+   
+    return true;
+#else
+
+    printf(" in ipc reader init\n");
+    printf(" in ipc reader init  %d\n", creation_success_);
+    at_eof_ = false;
+    if (!creation_success_ || !pipe_.open_for_read())
+        return false;
+    printf(" in ipc reader init2\n");
+    pipe_.maximize_buffer();
+    cur_buf_ = buf_;
+    end_buf_ = buf_;
+    ++*this;
+    return true;
+#endif
+}
+
+ipc_reader_t::~ipc_reader_t()
+{
+    pipe_.close();
+    pipe_.destroy();
+}
+
+trace_entry_t *
+ipc_reader_t::read_next_entry()
+{   
+#ifdef SHARE_MEM
+  //  printf("enter  read next entry \n");
+   // interbuf buf;
+    bool end = 0;   
+    long start_time = time(0); 
+    
+/**    printf("get sucess = fifo->p_head->rd_idx:%d\n",fifo->p_head->rd_idx);
+    printf("get sucess = fifo->p_head->flags:%d\n",fifo->flags[fifo->p_head->rd_idx]);
+    printf("get sucess = fifo->p_head->blksz:%d\n",fifo->p_head->blksz);
+    printf("enter  read next entry    after\n");
+    printf("  addr %lx \n",buf.pc);
+    printf("  addr %p \n",(int *)((unsigned long)fifo->p_payload+(fifo->p_head->rd_idx*fifo->p_head->blksz)));
+   */
+    while(1){
+        if(fifo->flags[fifo->p_head->rd_idx] ==1 ){
+            memcpy(&buf,(int *)((unsigned long)fifo->p_payload+(fifo->p_head->rd_idx*fifo->p_head->blksz)),fifo->p_head->blksz);
+
+            fifo->flags[fifo->p_head->rd_idx] = 0;
+        /**    printf("  pc %016lx \n",buf.pc);
+            printf("get sucess = fifo->p_head->rd_idx:%d\n",fifo->p_head->rd_idx);
+            printf("get sucess = fifo->p_head->wr_idx:%d\n",fifo->p_head->wr_idx);
+            printf("get sucess = fifo->flags[0]:%d\n",fifo->flags[0]);
+            printf("get sucess = fifo->flags[1]:%d\n",fifo->flags[1]);
+            printf("get sucess = fifo->flags[2]:%d\n",fifo->flags[2]);*/
+//        sleep(1);
+            fifo->p_head->rd_idx=(fifo->p_head->rd_idx+1)%(fifo->p_head->blocks);
+            break;
+        }
+        long end_time = time(0);
+        if(end_time- start_time >10){
+            end = 1;
+            break;
+        }
+        if(fifo->p_head->signal ==1){
+            printf("receive end signal \n");
+            end = 1;
+            break;
+        }
+    }
+//    trace_entry_t *buf_temp = malloc(sizeof(trace_entry_t));
+    
+//    printf(" end?  %d \n",end);
+    if (end){
+        cur_buf_ = buf_temp;   
+        cur_buf_->type = TRACE_TYPE_FOOTER;
+        cur_buf_->size = 0;
+        cur_buf_->addr = 0;
+        at_eof_ = true;
+        return cur_buf_;
+    }
+    if(buf.type == 3){
+        buf_temp->type = TRACE_TYPE_INSTR;
+        buf_temp->size = sizeof(addr_t);
+        buf_temp->addr = (addr_t)buf.insn.pre_jmp;
+    }else if(buf.type==1 || buf.type ==2){
+        if(buf.type ==1){
+            buf_temp->type = TRACE_TYPE_READ;
+            buf_temp->size = sizeof(addr_t);
+            buf_temp->addr = (addr_t)buf.insn.mem; 
+        }else if(buf.type ==2){
+            buf_temp->type = TRACE_TYPE_WRITE;
+            buf_temp->size = sizeof(addr_t);
+            buf_temp->addr = (addr_t)buf.insn.mem; 
+        }else{
+            buf_temp->type = TRACE_TYPE_PREFETCH;
+            buf_temp->size = sizeof(addr_t);
+            buf_temp->addr = (addr_t)buf.insn.mem; 
+        }
+    }else{
+        buf_temp->type = TRACE_TYPE_INSTR;
+        buf_temp->size = sizeof(addr_t);
+        buf_temp->addr = (addr_t)buf.instr;
+    
+    }
+    
+    cur_buf_ = buf_temp;
+    return cur_buf_; 
+#else
+    ++cur_buf_;
+    if (cur_buf_ >= end_buf_) {
+        ssize_t sz = pipe_.read(buf_, sizeof(buf_)); // blocking read
+        if (sz < 0 || sz % sizeof(*end_buf_) != 0) {
+            // We aren't able to easily distinguish truncation from a clean
+            // end (we could at least ensure the prior entry was a thread exit
+            // I suppose).
+            cur_buf_ = buf_;
+            cur_buf_->type = TRACE_TYPE_FOOTER;
+            cur_buf_->size = 0;
+            cur_buf_->addr = 0;
+            at_eof_ = true;
+            return cur_buf_;
+        }
+        cur_buf_ = buf_;
+        end_buf_ = buf_ + (sz / sizeof(*end_buf_));
+    }
+    if (cur_buf_->type == TRACE_TYPE_FOOTER)
+        at_eof_ = true;
+    return cur_buf_;
+#endif
+}

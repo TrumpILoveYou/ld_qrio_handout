@@ -1,0 +1,2 @@
+/home/qemu-arm-system/bin/qemu-system-arm -M vexpress-a9  -m 512M -smp 2 -kernel /home/tools/zImage -dtb /home/tools/vexpress-v2p-ca9.dtb -nographic -append "root=/dev/mmcblk0 rw console=ttyAMA0" -sd /home/tools/a9rootfs.ext3 
+#/home/qemu-x86-system/bin/qemu-system-x86_64    -m 512M -smp 2 -kernel /home/tools/bzImage  -nographic -append "root=/dev/mmcblk0 console=ttyAMA0" -sd /home/tools/a9rootfs.ext3 

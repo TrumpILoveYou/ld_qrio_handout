@@ -1,0 +1,2 @@
+在root用户下，运行conf目录下的conf.sh脚本即可即可完成共享内存所需的fok.key文件配置
+备注：若conf.sh无权限，使用chmod 777 conf.sh命令给予文件权限

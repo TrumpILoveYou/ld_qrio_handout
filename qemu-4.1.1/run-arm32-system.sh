@@ -1,0 +1,2 @@
+/home/qemu-arm64-system/bin/qemu-system-aarch64 -M vexpress-a9  -m 1024M  -smp cpus=1 -smp threads=1 -kernel /home/tools/zImage -dtb /home/tools/vexpress-v2p-ca9.dtb -nographic -append "root=/dev/mmcblk0 rw console=ttyAMA0" -sd /home/tools/a9rootfs.ext3 
+#/home/qemu-x86-system/bin/qemu-system-x86_64    -m 512M -smp 2 -kernel /home/tools/bzImage  -nographic -append "root=/dev/mmcblk0 console=ttyAMA0" -sd /home/tools/a9rootfs.ext3 

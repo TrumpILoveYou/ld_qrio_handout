@@ -1,0 +1,32 @@
+user mode
+linux-user/main.c	//create share mem
+accel/tcg/translator.c 	//pc/instr
+accel/tcg/cpu-exec.c	//pc/instr in cache
+
+system mode 
+vl.c  //main start share mem create
+target/arm/translate.c  //pc/instr
+target/arm/helper.c	//address
+cpus.c			//printf thread id
+
+arm64 trace info
+accel/tcg/translator.c		//pc&instr
+tcg/tcg-op.h	//mem
+tcg/tcg-op.c	//mem
+target/arm/cpu.h		//call
+target/arm/translate-a64.c	//call
+target/arm/helper.h		//call
+
+TB struct modify
+include/exec/exec-all.h   //add tb_trace field
+
+tb_gen_code
+accel/tcg/translate-all.c //tb_gen_code()
+
+arm64sys tem insn get
+target/arm/translate.c 
+
+
+
+#add ins to get mem address
+./include/qom/cpu.h

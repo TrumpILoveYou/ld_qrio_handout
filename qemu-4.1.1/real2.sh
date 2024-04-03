@@ -1,0 +1,1 @@
+ /home/qemu-arm-system/bin/qemu-system-arm -d in_asm -M vexpress-a9  -m 512M  -kernel /home/tools/zImage -dtb /home/tools/vexpress-v2p-ca9.dtb -nographic -append "root=/dev/mmcblk0 console=ttyAMA0" -sd /home/tools/a9rootfs.ext3
